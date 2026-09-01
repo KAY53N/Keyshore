@@ -10,13 +10,13 @@
 <div class="app">
     <header class="top">
         <div class="identity">
-            <div class="identicon" aria-hidden="true"></div>
+            <div class="identicon" id="identicon" aria-hidden="true"></div>
             <div class="identity-text">
-                <button class="addr" id="addrBtn" type="button" title="切换钱包">
-                    0x9cb0...f40b
+                <button class="addr" id="addrBtn" type="button" title="切换钱包" aria-haspopup="dialog" aria-expanded="false">
+                    <span id="addrText">0x9cb0...f40b</span>
                     <span class="chevron">▾</span>
                 </button>
-                <p class="wallet-meta">私钥钱包 · KAY53N-OKX-001</p>
+                <p class="wallet-meta" id="walletMeta">私钥钱包 · KAY53N-OKX-001</p>
             </div>
         </div>
         <div class="top-actions">
@@ -176,6 +176,138 @@
     <section class="panel empty" id="panel-dapp">暂无 DApp 连接</section>
     <section class="panel empty" id="panel-nft">暂无 NFT</section>
     <section class="panel empty" id="panel-approvals">暂无授权记录</section>
+</div>
+
+<div class="view" id="view-picker" hidden>
+    <header class="view-head">
+        <h2>钱包</h2>
+        <button class="icon-btn" id="closePicker" type="button" title="关闭" data-nav="home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </button>
+    </header>
+    <div class="picker-list" id="pickerList"></div>
+    <div class="picker-actions">
+        <button type="button" class="btn-secondary" id="manageWalletsBtn">管理钱包</button>
+        <button type="button" class="btn-primary" id="addWalletBtn">添加钱包</button>
+    </div>
+</div>
+
+<div class="view" id="view-manage" hidden>
+    <header class="view-head">
+        <button class="icon-btn" type="button" title="返回" data-nav="picker">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <h2>管理钱包</h2>
+        <button class="text-btn" type="button" id="manageAddBtn">添加</button>
+    </header>
+    <div class="manage-list" id="manageList"></div>
+</div>
+
+<div class="view" id="view-add" hidden>
+    <header class="view-head">
+        <button class="icon-btn" type="button" title="返回" data-nav="picker">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <h2>添加钱包</h2>
+        <span class="head-spacer"></span>
+    </header>
+    <div class="add-options">
+        <button type="button" class="add-option" data-add="create">
+            <span class="add-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+            </span>
+            <span class="add-copy">
+                <strong>创建新钱包</strong>
+                <small>生成助记词，在本机新建钱包</small>
+            </span>
+            <span class="add-chevron">›</span>
+        </button>
+        <button type="button" class="add-option" data-add="import">
+            <span class="add-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 4v12M7 11l5 5 5-5M5 20h14"/>
+                </svg>
+            </span>
+            <span class="add-copy">
+                <strong>导入已有钱包</strong>
+                <small>使用助记词或私钥恢复钱包</small>
+            </span>
+            <span class="add-chevron">›</span>
+        </button>
+    </div>
+</div>
+
+<div class="view" id="view-create" hidden>
+    <header class="view-head">
+        <button class="icon-btn" type="button" title="返回" data-nav="add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <h2>创建新钱包</h2>
+        <span class="head-spacer"></span>
+    </header>
+    <form class="form" id="createForm">
+        <label>
+            钱包名称
+            <input id="createName" type="text" maxlength="24" autocomplete="off" />
+        </label>
+        <p class="form-hint">将在本地生成助记词钱包。密钥不会上传。</p>
+        <button class="btn-primary btn-block" type="submit">创建新钱包</button>
+    </form>
+</div>
+
+<div class="view" id="view-import" hidden>
+    <header class="view-head">
+        <button class="icon-btn" type="button" title="返回" data-nav="add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <h2>导入已有钱包</h2>
+        <span class="head-spacer"></span>
+    </header>
+    <form class="form" id="importForm">
+        <div class="seg" role="tablist">
+            <button type="button" class="is-active" data-import-kind="mnemonic">助记词</button>
+            <button type="button" data-import-kind="privateKey">私钥</button>
+        </div>
+        <label>
+            <span id="importSecretLabel">助记词</span>
+            <textarea id="importSecret" rows="4" placeholder="用空格分隔的单词" autocomplete="off"></textarea>
+        </label>
+        <label>
+            钱包名称
+            <input id="importName" type="text" maxlength="24" autocomplete="off" />
+        </label>
+        <p class="form-hint">仅保存在本机，用于练手界面，不会发到网络。</p>
+        <button class="btn-primary btn-block" type="submit">导入已有钱包</button>
+    </form>
+</div>
+
+<div class="menu" id="walletMenu" hidden>
+    <button type="button" data-menu="rename">重命名</button>
+    <button type="button" data-menu="delete" class="danger">删除钱包</button>
+</div>
+
+<div class="dialog-backdrop" id="dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <h3 id="dialogTitle"></h3>
+        <p id="dialogText"></p>
+        <input id="dialogInput" type="text" maxlength="24" autocomplete="off" hidden />
+        <div class="dialog-actions">
+            <button type="button" class="btn-secondary" id="dialogCancel">取消</button>
+            <button type="button" class="btn-primary" id="dialogOk">确定</button>
+        </div>
+    </div>
 </div>
 
 <div class="toast" id="toast" hidden></div>
